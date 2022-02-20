@@ -1,11 +1,11 @@
 import threading
 from queue import Queue
 from spider import Spider
-from Domain import *
-from General import *
+from domain import *
+from general import *
 
-PROJECT_NAME = 'Crawler'
-HOMEPAGE = 'https://world.taobao.com/'
+PROJECT_NAME = 'Webcrawler'
+HOMEPAGE = 'https://www.cpp.edu/'
 DOMAIN_NAME = get_domain_name(HOMEPAGE)
 QUEUE_FILE = PROJECT_NAME + '/queue.txt'
 CRAWLED_FILE = PROJECT_NAME + '/crawled.txt'
@@ -14,7 +14,7 @@ queue = Queue()
 Spider(PROJECT_NAME, HOMEPAGE, DOMAIN_NAME)
 
 
-# create worker threads (will die with main exists)
+# Create worker threads (will die when main exits)
 def create_workers():
     for _ in range(NUMBER_OF_THREADS):
         t = threading.Thread(target=work)
@@ -22,7 +22,7 @@ def create_workers():
         t.start()
 
 
-# do the next job in the queue
+# Do the next job in the queue
 def work():
     while True:
         url = queue.get()
@@ -38,6 +38,7 @@ def create_jobs():
     crawl()
 
 
+# Check if there are items in the queue, if so crawl them
 def crawl():
     queued_links = file_to_set(QUEUE_FILE)
     if len(queued_links) > 0:

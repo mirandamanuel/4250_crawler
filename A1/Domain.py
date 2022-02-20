@@ -1,7 +1,7 @@
 from urllib.parse import urlparse
 
 
-# Get Domain name (example.com)
+# Get domain name (example.com)
 def get_domain_name(url):
     try:
         results = get_sub_domain_name(url).split('.')
