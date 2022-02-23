@@ -1,4 +1,3 @@
-import shutil
 import urllib.robotparser
 # from urllib.request import urlopen
 import requests
@@ -8,7 +7,7 @@ from domain import *
 from general import *
 from langdetect import detect
 import hashlib
-import os.path
+import os
 
 
 class Spider:
@@ -108,8 +107,9 @@ class Spider:
     @staticmethod
     def save_page(page_url, html_string):
         file_name = hashlib.md5(page_url.encode()).hexdigest().upper() + '.html'
-        file_path = os.path.join(Spider.project_name, file_name)
+        file_path = os.path.join(Spider.project_name, Spider.domain_name, file_name)
         if not os.path.isfile(file_path):
+            os.makedirs(os.path.dirname(file_path), exist_ok=True)
             with open(file_path, 'w', encoding='utf-8') as f:
                 f.write(html_string)
         else:
