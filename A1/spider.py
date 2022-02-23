@@ -11,7 +11,6 @@ import os
 
 
 class Spider:
-
     project_name = ''
     base_url = ''
     domain_name = ''
@@ -27,7 +26,7 @@ class Spider:
         Spider.base_url = base_url
         self.robots.set_url(base_url + 'robots.txt')
         self.robots.read()
-        Spider.lang = language
+        Spider.lang = language.lower()
         Spider.domain_name = domain_name
         Spider.queue_file = Spider.project_name + '/queue.txt'
         Spider.crawled_file = Spider.project_name + '/crawled.txt'
@@ -38,7 +37,7 @@ class Spider:
     @staticmethod
     def boot():
         create_project_dir(Spider.project_name)
-        create_data_files(Spider.project_name, Spider.base_url)
+        create_data_files(Spider.project_name, Spider.domain_name, Spider.base_url)
         Spider.queue = file_to_set(Spider.queue_file)
         Spider.crawled = file_to_set(Spider.crawled_file)
 
@@ -51,11 +50,15 @@ class Spider:
                 print('Queue ' + str(len(Spider.queue)) + ' | Crawled  ' + str(len(Spider.crawled)))
                 links = Spider.gather_links(page_url)
                 # if the page is in the desired language
-                if -1 not in links:    # error code: {-1}
+                if -1 not in links:  # error code: {-1}
                     Spider.add_links_to_queue(links)
                     Spider.queue.remove(page_url)
                     Spider.crawled.add(page_url)
                     Spider.update_files()
+                    # generates report
+                    num_out_links = len(links)
+                    append_to_file(os.path.join(Spider.project_name, Spider.domain_name, 'report.csv'),
+                                   page_url + ', ' + str(num_out_links))
                 else:
                     Spider.queue.remove(page_url)
                     Spider.update_files()
@@ -75,12 +78,17 @@ class Spider:
                 html_string = response.text
                 if len(html_string) > 0:
                     soup = BeautifulSoup(html_string, 'html.parser')
-                    # check if the page is in desired language
-                    if detect(soup.body.get_text()) != Spider.lang:
-                        print('Page ' + page_url + ' is not in the desired language ' + Spider.lang)
-                        return {-1}  # error code: {-1}
+                    # set the desired language to the language of the first page
+                    if len(Spider.lang) == 0:
+                        Spider.lang = detect(soup.body.get_text())
+                        print('The desired language is now set to ' + Spider.lang.upper())
                     else:
-                        Spider.save_page(page_url, html_string)
+                        # check if the page is in the desired language
+                        if detect(soup.body.get_text()) != Spider.lang:
+                            print('Page ' + page_url + ' is not in the desired language ' + Spider.lang.upper())
+                            return {-1}  # error code: {-1}
+                        else:
+                            Spider.save_page(page_url, html_string)
             finder = LinkFinder(Spider.base_url, page_url)
             finder.feed(html_string)
         except Exception as e:
@@ -91,7 +99,7 @@ class Spider:
     # Saves queue data to project files
     @staticmethod
     def add_links_to_queue(links):
-        if -1 not in links:     # error code: {-1}
+        if -1 not in links:  # error code: {-1}
             for url in links:
                 if (url in Spider.queue) or (url in Spider.crawled):
                     continue
@@ -110,7 +118,6 @@ class Spider:
         file_path = os.path.join(Spider.project_name, Spider.domain_name, file_name)
         if not os.path.isfile(file_path):
             os.makedirs(os.path.dirname(file_path), exist_ok=True)
-            with open(file_path, 'w', encoding='utf-8') as f:
-                f.write(html_string)
+            write_file(file_path, html_string)
         else:
             print('File ' + file_name + ' already exists!')
