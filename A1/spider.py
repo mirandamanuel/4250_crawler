@@ -1,3 +1,4 @@
+import shutil
 import urllib.robotparser
 # from urllib.request import urlopen
 import requests
