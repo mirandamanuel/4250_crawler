@@ -14,7 +14,6 @@ LANGUAGE = ''
 NUMBER_OF_THREADS = 8
 queue = Queue()
 Spider(PROJECT_NAME, HOMEPAGE, DOMAIN_NAME, LANGUAGE)
-crawl_depth = 500
 
 
 # Create worker threads (will die when main exits)
