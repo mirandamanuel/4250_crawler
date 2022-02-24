@@ -37,8 +37,7 @@ class WordsParser(HTMLParser):
                 
                 # filter words
                 if (
-                       len(common_word) > 2 and
-                       common_word not in ['the', 'and', 'all'] and
+                       len(common_word) >= 2 and
                        common_word[0].isalpha()
                    ):
 
@@ -63,7 +62,7 @@ if __name__ == '__main__':
     # html = response.read().decode('utf-8', errors='ignore')
 
     PROJECT_NAME = 'repository'
-    DOMAIN_NAME = get_domain_name('https://www.cpp.edu/')
+    DOMAIN_NAME = get_domain_name('https://www.gmarket.co.kr/')
     html_dir = os.path.join(PROJECT_NAME, DOMAIN_NAME)
 
     # create words parser instance
@@ -83,6 +82,6 @@ if __name__ == '__main__':
     most_common = words_count.most_common(100)
     
     # loop over most common words
-    with open(os.path.join(PROJECT_NAME, 'frequentWords.csv'), 'w') as f:
+    with open(os.path.join(PROJECT_NAME, 'frequentWords.csv'), 'w', encoding='utf-8') as f:
         for word, count in most_common:
             print(word, str(count) + ' times', sep=", ", file = f)
