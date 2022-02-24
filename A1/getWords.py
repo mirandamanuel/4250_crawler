@@ -1,8 +1,10 @@
 # packages
-from urllib.request import urlopen
+# from urllib.request import urlopen
 from html.parser import HTMLParser
-import json
+from domain import *
 import collections
+import os
+
 
 # words parser class
 class WordsParser(HTMLParser):
@@ -47,33 +49,40 @@ class WordsParser(HTMLParser):
                     except:
                         # store current common word
                         self.common_words.update({common_word: 1})
-    
+
+
 # main driver
 if __name__ == '__main__':
-    # target URL to scrape
-    url = 'https://www.cpp.edu/'
-    
-    # make HTTP GET request to the target URL
-    response = urlopen(url)
-    
-    # extract HTML document from response
-    html = response.read().decode('utf-8', errors='ignore')
-    
+    # # target URL to scrape
+    # url = 'https://www.cpp.edu/'
+    #
+    # # make HTTP GET request to the target URL
+    # response = urlopen(url)
+    #
+    # # extract HTML document from response
+    # html = response.read().decode('utf-8', errors='ignore')
+
+    PROJECT_NAME = 'Webcrawler'
+    DOMAIN_NAME = get_domain_name('https://www.cpp.edu/')
+    html_dir = os.path.join(PROJECT_NAME, DOMAIN_NAME)
+
     # create words parser instance
     words_parser = WordsParser()
-    
-    # feed HTML to words parser
-    words_parser.feed(html)
+
+    for file in os.listdir(html_dir):
+        if file.endswith('.html'):
+            with open(os.path.join(html_dir, file), 'r', encoding='utf-8') as html_file:
+                html_string = html_file.read()
+                # feed HTML to words parser
+                words_parser.feed(html_string)
     
     # count common words with counter
     words_count = collections.Counter(words_parser.common_words)
     
-    # extract 25 most comon words
+    # extract 100 most common words
     most_common = words_count.most_common(100)
     
     # loop over most common words
-    with open('frequentWords.csv', 'w') as f:
+    with open(os.path.join(PROJECT_NAME, 'frequentWords.csv'), 'w') as f:
         for word, count in most_common:
-            print(word, str(count) + ' times', sep=": ", file = f)
-
-        
+            print(word, str(count) + ' times', sep=", ", file = f)
