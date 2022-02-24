@@ -62,7 +62,7 @@ if __name__ == '__main__':
     # # extract HTML document from response
     # html = response.read().decode('utf-8', errors='ignore')
 
-    PROJECT_NAME = 'Webcrawler'
+    PROJECT_NAME = 'repository'
     DOMAIN_NAME = get_domain_name('https://www.cpp.edu/')
     html_dir = os.path.join(PROJECT_NAME, DOMAIN_NAME)
 

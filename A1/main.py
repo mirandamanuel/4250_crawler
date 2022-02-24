@@ -4,7 +4,7 @@ from spider import Spider
 from domain import *
 from general import *
 
-PROJECT_NAME = 'Webcrawler'
+PROJECT_NAME = 'repository'
 HOMEPAGE = 'https://www.cpp.edu/'
 DOMAIN_NAME = get_domain_name(HOMEPAGE)
 QUEUE_FILE = PROJECT_NAME + '/queue.txt'
@@ -14,6 +14,7 @@ LANGUAGE = ''
 NUMBER_OF_THREADS = 8
 queue = Queue()
 Spider(PROJECT_NAME, HOMEPAGE, DOMAIN_NAME, LANGUAGE)
+crawl_depth = 500
 
 
 # Create worker threads (will die when main exits)
