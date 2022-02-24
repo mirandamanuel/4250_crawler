@@ -1,5 +1,3 @@
-# packages
-# from urllib.request import urlopen
 from html.parser import HTMLParser
 from domain import *
 import collections
@@ -42,7 +40,7 @@ class WordsParser(HTMLParser):
                    ):
 
                     try:
-                        # try to update count of a given word if available
+                        # try to update count of a given word 
                         self.common_words[common_word] += 1
                     
                     except:
@@ -52,14 +50,6 @@ class WordsParser(HTMLParser):
 
 # main driver
 if __name__ == '__main__':
-    # # target URL to scrape
-    # url = 'https://www.cpp.edu/'
-    #
-    # # make HTTP GET request to the target URL
-    # response = urlopen(url)
-    #
-    # # extract HTML document from response
-    # html = response.read().decode('utf-8', errors='ignore')
 
     PROJECT_NAME = 'repository'
     DOMAIN_NAME = get_domain_name('https://www.gmarket.co.kr/')
@@ -72,7 +62,7 @@ if __name__ == '__main__':
         if file.endswith('.html'):
             with open(os.path.join(html_dir, file), 'r', encoding='utf-8') as html_file:
                 html_string = html_file.read()
-                # feed HTML to words parser
+                # feed the HTML to words parser
                 words_parser.feed(html_string)
     
     # count common words with counter
