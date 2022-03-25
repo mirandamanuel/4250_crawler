@@ -58,7 +58,7 @@ if __name__ == '__main__':
     PROJECT_NAME = 'repository'
     DOMAIN_NAME = get_domain_name('https://www.cpp.edu/')
     html_dir = os.path.join(PROJECT_NAME)
-    # html_dir = os.path.join(PROJECT_NAME, DOMAIN_NAME)
+
 
     index = Indexer()
     for root, dirs, files in os.walk(html_dir):
@@ -70,8 +70,6 @@ if __name__ == '__main__':
                     # feed the HTML to words parser
                     index.feed(html_string)
 
-    # for e in os.walk(html_dir):
-    #     print(e)
     with open(os.path.join(PROJECT_NAME, 'index.txt'), "a", encoding='utf-8') as f:
         f.write(str(index.get_index()))
 
