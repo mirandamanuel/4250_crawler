@@ -8,19 +8,20 @@ import os
 class WordsParser(HTMLParser):
     # tags to search text within
     search_tags = ['p', 'div', 'span', 'a', 'h1', 'h2', 'h2', 'h3', 'h4']
-    
+
     # current tag
     current_tag = ''
-    
+
     # common word list
     common_words = {}
-    
+
     # handle starting tag
     def handle_starttag(self, tag, attr):
         # store current tag
-        self.current_tag = tag        
-            
-    # handle tag's data
+        self.current_tag = tag
+
+        # handle tag's data
+
     def handle_data(self, data):
         # make sure current tag matches search tags
         if self.current_tag in self.search_tags:
@@ -32,27 +33,26 @@ class WordsParser(HTMLParser):
                 common_word = common_word.replace(':', '')
                 common_word = common_word.replace(',', '')
                 common_word = common_word.replace('"', '')
-                
+
                 # filter words
                 if (
-                       len(common_word) >= 2 and
-                       common_word[0].isalpha()
-                   ):
+                        len(common_word) >= 2 and
+                        common_word[0].isalpha()
+                ):
 
                     try:
-                        # try to update count of a given word 
+                        # try to update count of a given word
                         self.common_words[common_word] += 1
-                    
+
                     except:
                         # store current common word
                         self.common_words.update({common_word: 1})
-
 
 # main driver
 if __name__ == '__main__':
 
     PROJECT_NAME = 'repository'
-    DOMAIN_NAME = get_domain_name('https://www.gmarket.co.kr/')
+    DOMAIN_NAME = get_domain_name('https://www.cpp.edu/')
     html_dir = os.path.join(PROJECT_NAME, DOMAIN_NAME)
 
     # create words parser instance
