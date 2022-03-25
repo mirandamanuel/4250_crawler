@@ -57,18 +57,21 @@ class Indexer(HTMLParser):
 if __name__ == '__main__':
     PROJECT_NAME = 'repository'
     DOMAIN_NAME = get_domain_name('https://www.cpp.edu/')
-    # html_dir = os.path.join(PROJECT_NAME)
-    html_dir = os.path.join(PROJECT_NAME, DOMAIN_NAME)
+    html_dir = os.path.join(PROJECT_NAME)
+    # html_dir = os.path.join(PROJECT_NAME, DOMAIN_NAME)
 
     index = Indexer()
+    for root, dirs, files in os.walk(html_dir):
+        for file in files:
+            if file.endswith('.html'):
+                index.set_file_name(os.path.join(root, file))
+                with open(os.path.join(root, file), 'r', encoding='utf-8') as html_file:
+                    html_string = html_file.read()
+                    # feed the HTML to words parser
+                    index.feed(html_string)
 
-    for file in os.listdir(html_dir):
-        if file.endswith('.html'):
-            index.set_file_name(file)
-            with open(os.path.join(html_dir, file), 'r', encoding='utf-8') as html_file:
-                html_string = html_file.read()
-                # feed the HTML to words parser
-                index.feed(html_string)
-
-    print(index.get_index())
+    # for e in os.walk(html_dir):
+    #     print(e)
+    with open(os.path.join(PROJECT_NAME, 'index.txt'), "a", encoding='utf-8') as f:
+        f.write(str(index.get_index()))
 
