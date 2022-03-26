@@ -70,9 +70,6 @@ if __name__ == '__main__':
                     # feed the HTML to words parser
                     index.feed(html_string)
 
-    with open(os.path.join(PROJECT_NAME, 'index.txt'), "a", encoding='utf-8') as f:
-        f.write(str(index.get_index()))
-
     with open(os.path.join(PROJECT_NAME, 'index.csv'), 'w', encoding='utf-8') as f:
         for key in index.get_index().keys():
             print(key, str(index.get_index()[key]), sep=", ", file=f)

@@ -1,58 +1,53 @@
-from indexer import Index
+import indexer
+from domain import *
+import os
 
-class retrieval():
-    
-    def __init__(searchWords, index):
-        
-        searchWords.index = index
-        searchWords.results = []
+if __name__ == '__main__':
+    PROJECT_NAME = 'repository'
+    DOMAIN_NAME = get_domain_name('https://www.cpp.edu/')
+    html_dir = os.path.join(PROJECT_NAME)
 
-    
-    def search(searchWords, search_type = 'AND'):
-        
-        
-        # get user input
-        query = input("Please enter your query: ").lower()
-        
-        # clear results
-        searchWords.results = []
-        
-        
-        terms = query.split(" ")
-        
-        # get the indexes and put them into doc
-        indexFile = searchWords.index.getIndex()
-        for i in indexFile:
-            indexFile[i] = set(indexFile[i])
-        
-        #
-        result_set = set()
-        for term in terms:
-            if term in indexFile:
-                if len(result_set) != 0:
-                    result_set = result_set & indexFile[term]
-                else:
-                    result_set = indexFile[term]
+    indexer = indexer.Indexer()
+    for root, dirs, files in os.walk(html_dir):
+        for file in files:
+            if file.endswith('.html'):
+                indexer.set_file_name(os.path.join(root, file))
+                with open(os.path.join(root, file), 'r', encoding='utf-8') as html_file:
+                    html_string = html_file.read()
+                    # feed the HTML to words parser
+                    indexer.feed(html_string)
 
-        # print out results
-        if search_type =='AND':
-            
-            searchWords.results = list(result_set)
-            result = "Relevant results are: "
-            for doc in searchWords.results:
-                result += doc + " "                
-        print(result)
-   
-#search from these files
-foundIndex = Index()
-foundIndex.createIndex("output/frequentWords(cpp).csv")
-SearchWord = retrieval(foundIndex)
-SearchWord.search()
 
-foundIndex.createIndex("output/frequentWords(gmarket).csv")
-SearchWord = retrieval(foundIndex)
-SearchWord.search()
+    query = input("Please enter your query: ").lower()
+    while(query != "e"):
+        index = indexer.get_index()
 
-foundIndex.createIndex("output/frequentWords(tudn).csv")
-SearchWord = retrieval(foundIndex)
-SearchWord.search()
+        args = query.split(" ")
+        current_search_word = ""
+        file_matches = {}
+        word_count = 0
+        result = set()
+        # checks that all words exist in index
+        for word in args:
+            if word not in index:
+                print(result)
+
+            if word != "and":
+                word_count += 1
+                files = index[word]
+                for file in files:
+                    if file in file_matches:
+                        prev_count = file_matches[file]
+                        file_matches[file] = prev_count+1
+                    else:
+                        file_matches[file] = 1
+
+        for match in list(file_matches):
+            if file_matches[match] is word_count:
+                result.add(match)
+
+        print("Results are", result)
+        query = input("Enter 'e' to exit, or enter another query:").lower()
+
+
+
