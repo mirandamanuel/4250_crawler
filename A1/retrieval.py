@@ -2,14 +2,11 @@ import indexer
 from domain import *
 import os
 
-if __name__ == '__main__':
-    DOMAIN_NAME = get_domain_name('https://www.cpp.edu/')
 
-    indexer = indexer.Indexer()
-
+def unranked_bool(indexer_instance):
     query = input("Please enter your query: ").lower()
     while query != "e":
-        index = indexer.index_dict
+        index = indexer_instance.index_dict
         args = query.split(" ")
         current_search_word = ""
         file_matches = {}
@@ -36,3 +33,8 @@ if __name__ == '__main__':
 
         print("Results are", result)
         query = input("Enter 'e' to exit, or enter another query:").lower()
+
+
+if __name__ == '__main__':
+    indexer = indexer.Indexer()
+    unranked_bool(indexer)
