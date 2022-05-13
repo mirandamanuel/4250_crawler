@@ -46,31 +46,19 @@ class Indexer(HTMLParser):
                     else:
                         self.index_dict[current_word] = {self.file_name}
 
-    def get_index(self):
-        return self.index_dict
-
     def set_file_name(self, file_name):
         self.file_name = file_name
 
-
-
-if __name__ == '__main__':
-    PROJECT_NAME = 'repository'
-    DOMAIN_NAME = get_domain_name('https://www.cpp.edu/')
-    html_dir = os.path.join(PROJECT_NAME)
-
-
-    index = Indexer()
-    for root, dirs, files in os.walk(html_dir):
-        for file in files:
-            if file.endswith('.html'):
-                index.set_file_name(os.path.join(root, file))
-                with open(os.path.join(root, file), 'r', encoding='utf-8') as html_file:
-                    html_string = html_file.read()
-                    # feed the HTML to words parser
-                    index.feed(html_string)
-
-    with open(os.path.join(PROJECT_NAME, 'index.csv'), 'w', encoding='utf-8') as f:
-        for key in index.get_index().keys():
-            print(key, str(index.get_index()[key]), sep=", ", file=f)
+    def __init__(self):
+        super().__init__()
+        project_name = 'repository'
+        html_dir = os.path.join(project_name)
+        for root, dirs, files in os.walk(html_dir):
+            for file in files:
+                if file.endswith('.html'):
+                    self.set_file_name(os.path.join(root, file))
+                    with open(os.path.join(root, file), 'r', encoding='utf-8') as html_file:
+                        html_string = html_file.read()
+                        # feed the HTML to words parser
+                        self.feed(html_string)
 
