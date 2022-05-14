@@ -37,10 +37,44 @@ def unranked_bool(indexer_instance):
 
 def ranked_bool(indexer_instance):
     query = input("Please enter your query: ").lower()
+    subqueries = []
+    first_occ = query.find("(")
+    last_occ = query.rfind(")")
+    subquery = query[first_occ + 1:last_occ]
+    print(subquery)
 
+
+
+def and_op(term1_dict, term2_dict):
+    result = {}
+    for doc in term1_dict:
+        if doc in term2_dict:
+            result[doc] = min(term1_dict[doc], term2_dict[doc])
+    return result
+
+
+def or_op(term1_dict, term2_dict):
+    result = {}
+    for doc in term1_dict:
+        if doc in term2_dict:
+            result[doc] = term1_dict[doc] + term2_dict[doc]
+        else:
+            result[doc] = term1_dict[doc]
+    for doc in term2_dict:
+        if doc not in result:
+            result[doc] = term2_dict[doc]
+    return result
+
+
+def not_op(term1_dict, term2_dict):
+    result = {}
+    for doc in term1_dict:
+        if doc not in term2_dict:
+            result[doc] = term1_dict[doc]
+    return result
 
 
 if __name__ == '__main__':
-    indexer = indexer.Indexer()
-    indexer.print()
-    #ranked_bool(indexer)
+    # indexer = indexer.Indexer()
+    # indexer.print()
+    ranked_bool(indexer)
