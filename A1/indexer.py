@@ -13,6 +13,8 @@ class Indexer(HTMLParser):
 
     # index represented as dictionary
     index_dict = {}
+    # dictionary where key is a document and value is the term frequency (tf)
+    tf_dict = {}
 
     file_name = ''
 
@@ -41,13 +43,23 @@ class Indexer(HTMLParser):
                         current_word[0].isalpha()
                 ):
                     if current_word in self.index_dict:
-                        current_list = self.index_dict[current_word]
-                        current_list.add(self.file_name)
+                        current_tf_dict = self.index_dict[current_word]
+                        if self.file_name in current_tf_dict:
+                            doc_tf = current_tf_dict[self.file_name]
+                            current_tf_dict[self.file_name] = doc_tf + 1
+                        else:
+                            current_tf_dict[self.file_name] = 1
                     else:
-                        self.index_dict[current_word] = {self.file_name}
+                        self.index_dict[current_word] = {self.file_name: 1}
 
     def set_file_name(self, file_name):
         self.file_name = file_name
+
+    def print(self):
+        for word in self.index_dict:
+            print(word + ":")
+            print(self.index_dict[word])
+            print()
 
     def __init__(self):
         super().__init__()

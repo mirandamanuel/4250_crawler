@@ -35,6 +35,12 @@ def unranked_bool(indexer_instance):
         query = input("Enter 'e' to exit, or enter another query:").lower()
 
 
+def ranked_bool(indexer_instance):
+    query = input("Please enter your query: ").lower()
+
+
+
 if __name__ == '__main__':
     indexer = indexer.Indexer()
-    unranked_bool(indexer)
+    indexer.print()
+    #ranked_bool(indexer)
