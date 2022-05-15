@@ -48,9 +48,7 @@ def evaluate(index, query):
     # JACK AND JILL
     if query.find("(") == -1:
         terms = query.split(" ")
-        print(terms)
         if "and" in terms[1]:
-            print("correct op")
             if "not" in terms[2]:
                 result = not_op(index[terms[0]], index[terms[3]])
                 del terms[0]
