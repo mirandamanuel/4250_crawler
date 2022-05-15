@@ -1,4 +1,6 @@
 import indexer
+from collections import OrderedDict
+from operator import itemgetter
 from domain import *
 import os
 
@@ -35,14 +37,65 @@ def unranked_bool(indexer_instance):
         query = input("Enter 'e' to exit, or enter another query:").lower()
 
 
-def ranked_bool(indexer_instance):
+def ranked_bool(index):
     query = input("Please enter your query: ").lower()
-    subqueries = []
-    first_occ = query.find("(")
-    last_occ = query.rfind(")")
-    subquery = query[first_occ + 1:last_occ]
-    print(subquery)
+    result = sorted(evaluate(index, query).items(), key=lambda x: x[1], reverse=True)
+    return print(result)
 
+
+def evaluate(index, query):
+    result = {}
+    # JACK AND JILL
+    if query.find("(") == -1:
+        terms = query.split(" ")
+        print(terms)
+        if "and" in terms[1]:
+            print("correct op")
+            if "not" in terms[2]:
+                result = not_op(index[terms[0]], index[terms[3]])
+                del terms[0]
+                del terms[0]
+                del terms[0]
+                del terms[0]
+            else:
+                result = and_op(index[terms[0]], index[terms[2]])
+                del terms[0]
+                del terms[0]
+                del terms[0]
+        elif "or" in terms[1]:
+            result = or_op(index[terms[0]], index[terms[2]])
+            del terms[0]
+            del terms[0]
+            del terms[0]
+        while terms:
+            if "and" in terms[0]:
+                if "not" in terms[1]:
+                    result = not_op(result, index[terms[2]])
+                    del terms[0]
+                    del terms[0]
+                    del terms[0]
+                else:
+                    result = and_op(result, index[terms[1]])
+                    del terms[0]
+                    del terms[0]
+            elif "or" in terms[0]:
+                result = or_op(result, index[terms[1]])
+                del terms[0]
+                del terms[0]
+        return result
+    # JACK AND (JILL OR RANDY)
+    else:
+        open_paren = query.find("(")
+        close_paren = query.rfind(")")
+        subquery = query[open_paren + 1:close_paren]
+        terms = query.split(" ")
+        if "and" in terms[1]:
+            if "not" in terms[2]:
+                return not_op(index[terms[0]], evaluate(index, subquery))
+            else:
+                return and_op(index[terms[0]], evaluate(index, subquery))
+        elif "or" in terms[1]:
+            return or_op(index[terms[0]], evaluate(index, subquery))
 
 
 def and_op(term1_dict, term2_dict):
@@ -75,6 +128,7 @@ def not_op(term1_dict, term2_dict):
 
 
 if __name__ == '__main__':
-    # indexer = indexer.Indexer()
+    indexer = indexer.Indexer()
+    index = indexer.index_dict
     # indexer.print()
-    ranked_bool(indexer)
+    ranked_bool(index)
