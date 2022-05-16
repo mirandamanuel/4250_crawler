@@ -69,6 +69,9 @@ def top_100(path, PR):
         for page in list(PR.keys())[:100]:
             f.write(f'{hash_link_dict[page]}, {PR[page]}\n')
 
+    with open(os.path.join(path, 'hash_page_rank.csv'), 'w', encoding='utf-8') as f:
+        for page in PR:
+            f.write(f'{page}, {PR[page]}\n')
 
 if __name__ == '__main__':
     path = r'repository\cpp.edu'

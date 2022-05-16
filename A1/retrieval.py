@@ -40,7 +40,7 @@ def unranked_bool(indexer_instance):
 def ranked_bool(index):
     query = input("Please enter your query: ").lower()
     result = sorted(evaluate(index, query).items(), key=lambda x: x[1], reverse=True)
-    return print(result)
+    return result
 
 
 def evaluate(index, query):
@@ -129,4 +129,26 @@ if __name__ == '__main__':
     indexer = indexer.Indexer()
     index = indexer.index_dict
     # indexer.print()
-    ranked_bool(index)
+    result = ranked_bool(index)
+    print('Retrieval result:')
+    print(result)
+
+    # Combine retrieval score with page rank score
+    pr_score_dict = {}
+    for root, dirs, files in os.walk(os.path.join('repository')):
+        for file in files:
+            if file.endswith('hash_page_rank.csv'):
+                with open(os.path.join(root, file), 'r', encoding='utf-8') as f:
+                    for line in f:
+                        hash_name, score = line.split(', ')
+                        pr_score_dict[hash_name] = float(score)
+
+    final_score = {}
+    for item in result:
+        page = item[0].split('\\')[-1].replace('.html', '')
+        score = item[1]
+        final_score[page] = score * pr_score_dict.get(page, 0)
+
+    final_score = dict(sorted(final_score.items(), key=lambda x: x[1], reverse=True))
+    print('Final result:')
+    print(final_score)
